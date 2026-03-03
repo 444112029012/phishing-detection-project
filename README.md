@@ -15,3 +15,6 @@
  * 用於元模型訓練: phishing_dataset_expansion_forEmbeddingModule_Gemini_text_success
  * 注意: 模型訓練時需要新增欄位「text_length」，記錄網頁文本長度，此欄位對於模型效果有顯著影響
 ## 資料集連結: https://drive.google.com/drive/folders/1jWLVY82goJM3t9FVoLrSrQUbv8p5UQy_?usp=sharing
+
+# 其他注意事項
+ * llama-cpp-python 套件安裝時容易出錯，可參考LLM環境部屬指南
