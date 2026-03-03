@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      width: 350px;
+      /* 稍微加寬以容納更多資訊 */
+      font-family: sans-serif;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      width: 98%;
+      height: 150px;
+      /* 為兩個文字區塊設定高度 */
+      margin-top: 5px;
+    }
+
+    input[type="text"] {
+      width: 98%;
+      margin-top: 5px;
+    }
+
+    label {
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <button id="getInfoButton">獲取網頁資訊</button>
+  <label for="urlDisplay">網頁 URL:</label>
+  <input type="text" id="urlDisplay" readonly placeholder="網頁 URL 將顯示於此...">
+
+  <label for="textContent">網頁文本 (Text):</label>
+  <textarea id="textContent" readonly placeholder="網頁文本將顯示於此..."></textarea>
+
+  <label for="htmlContent">網頁 HTML:</label>
+  <textarea id="htmlContent" readonly placeholder="網頁 HTML 原始碼將顯示於此..."></textarea>
+
+  <button id="getPredict">取得預測結果</button>
+
+  <label for="result">預測結果:</label>
+  <textarea id="result" readonly placeholder="預測結果將顯示於此..."></textarea>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>

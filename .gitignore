@@ -1,0 +1,8 @@
+venv/
+__pycache__/
+LLM/*.gguf
+*.log
+.env
+glm_env/
+llama.cpp/
+資料集/

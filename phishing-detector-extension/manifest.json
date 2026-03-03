@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "網頁資訊獲取器",
+  "version": "1.1",
+  "description": "獲取當前頁面的 URL、可見文本和 HTML 原始碼。",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:5000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  }
+}
