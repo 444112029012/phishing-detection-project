@@ -1,6 +1,7 @@
 from xgboost import XGBClassifier
 from tensorflow.keras.models import load_model
 import joblib
+import numpy as np
 class PhishingDetectorModel:
     def __init__(self):
         self.URL_Feature_Model = self.get_URL_Feature_Model()
@@ -45,7 +46,7 @@ class PhishingDetectorModel:
             'is_content_login_focused', 'has_rich_navigation', 
             'has_physical_address', 'has_phone_number',
             'content_consistency_score', 'language_professionalism_score', 
-            'overall_phishing_likelihood_score'
+            'overall_phishing_likelihood_score', 'text_length'
             ]
         try:
             if set(url_col) != set(url_feature.columns) or set(html_col) != set(html_feature.columns) or set(ai_col) != set(ai_feature.columns):
@@ -59,17 +60,23 @@ class PhishingDetectorModel:
             print(f'Error: {e}')
             return False
     def get_URL_Feature_Model(self):
-        return XGBClassifier().load_model(r"phishing-backend\\model\\url_xgb_v1.json")
+        model = XGBClassifier()
+        model.load_model(r"phishing-backend\\model\\url_xgb_v1.json")
+        return model
     def get_HTMLStructure_Feature_Model(self):
         return load_model(r"phishing-backend\\model\\html_mlp_v1.keras")
     def get_HTMLContent_Feature_Scaler(self):
         return joblib.load(r"phishing-backend\\model\\html_scaler.pkl")
     def get_HTMLContent_AI_Feature_Model(self):
-        return XGBClassifier().load_model(r"phishing-backend\\model\\ai_xgb_v1.json")
+        model = XGBClassifier()
+        model.load_model(r"phishing-backend\\model\\ai_xgb_v1.json")
+        return model
     def get_Meta_Model(self):
         ##還沒寫好
         pass
         # return joblib.load(r"model\\meta_model_v1.pkl")
+    def get_feature_vector(self):
+        return self.feature_vector
     def set_feature_vector(self, url_feature, html_feature, ai_feature):
         try:
             self.feature_vector = np.c_[self.URL_Feature_Model.predict_proba(url_feature)[:, 1], 
@@ -97,7 +104,6 @@ class PhishingDetectorModel:
             print(html_feature.info())
             return None
         print('html_feature特徵轉換完成')
-        print(html_feature.info())
         return html_feature
 
     def preprocess_ai(self, ai_feature):
@@ -110,7 +116,6 @@ class PhishingDetectorModel:
                 print(f'調整錯誤:{e}')
                 return None
             print('調整完成')
-            print(ai_feature.info())
         bool_col = ['creates_urgency', 'uses_threats', 'requests_sensitive_info',
             'offers_unrealistic_rewards', 'has_spelling_grammar_errors',
             'has_valid_copyright_year', 'is_content_login_focused',
@@ -118,7 +123,6 @@ class PhishingDetectorModel:
         ai_feature[bool_col] = ai_feature[bool_col].astype(int)
         ai_feature['impersonated_brand'] = [1 if k else 0 for k in ai_feature['impersonated_brand'].notnull()]
         print('AI特徵轉換完成')
-        print(ai_feature.info())
         return ai_feature
         
             

@@ -40,15 +40,21 @@ class PhishingDetectorAPI:
         data = request.get_json()
         if not data:
             return jsonify({'status':'error', 'message':'無效數據'}), 400
+        print('特徵萃取...')
         url_feature = self.extractor.get_URL_Feature(self.url)
         html_feature = self.extractor.get_HTMLStructure_Feature(self.url, self.html_structure)
         ai_feature = self.extractor.get_HTMLContent_AI_Feature(self.html_content)
-        print(url_feature)
-        print(html_feature)
-        print(ai_feature)
+        ai_feature = self.detector.preprocess_ai(ai_feature)
+        html_feature = self.detector.preprocess_html(html_feature)
+        print('檢查欄位...')
+        if self.detector.check_feature(url_feature, html_feature, ai_feature):
+            print('欄位正確')
+        print('特徵向量萃取...')
+        self.detector.set_feature_vector(url_feature, html_feature, ai_feature)
+        vector_feature = self.detector.get_feature_vector()
         return jsonify({
             'status':'success',
-            'message': ''
+            'message': vector_feature.tolist()
         })
 
     def run(self, host='127.0.0.1', port=5000):

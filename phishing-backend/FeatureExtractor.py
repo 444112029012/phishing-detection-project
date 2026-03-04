@@ -542,6 +542,7 @@ class FeatureExtractor:
             features['creates_urgency'] = json_data['creates_urgency']
             features['uses_threats'] = json_data['uses_threats']
             features['requests_sensitive_info'] = json_data['requests_sensitive_info']
+            features['offers_unrealistic_rewards'] = json_data['offers_unrealistic_rewards']
             features['has_spelling_grammar_errors'] = json_data['has_spelling_grammar_errors']
             features['impersonated_brand'] = json_data['impersonated_brand']
             features['has_valid_copyright_year'] = json_data['has_valid_copyright_year']
@@ -552,6 +553,7 @@ class FeatureExtractor:
             features['content_consistency_score'] = json_data['content_consistency_score']
             features['language_professionalism_score'] = json_data['language_professionalism_score']
             features['overall_phishing_likelihood_score'] = json_data['overall_phishing_likelihood_score']
+            features['text_length'] = len(str(text))
             results.append(features)
             return pd.DataFrame(results)
 
