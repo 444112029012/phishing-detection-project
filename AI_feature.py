@@ -107,7 +107,7 @@ class Dataset_Manager:
             df_process = self.df.copy()
             
             for index, row in df_process.iterrows():
-                if index < 56000:
+                if index < 60000:
                     continue
                 print(f'正在處理第{index+1}/{len(df_process)}筆資料, url:{row["url"]}')
                 if row['ai_status'] == 'AI_SUCCESS' and pd.notna(row['creates_urgency']):

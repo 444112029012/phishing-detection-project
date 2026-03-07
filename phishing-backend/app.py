@@ -46,15 +46,11 @@ class PhishingDetectorAPI:
         ai_feature = self.extractor.get_HTMLContent_AI_Feature(self.html_content)
         ai_feature = self.detector.preprocess_ai(ai_feature)
         html_feature = self.detector.preprocess_html(html_feature)
-        print('檢查欄位...')
-        if self.detector.check_feature(url_feature, html_feature, ai_feature):
-            print('欄位正確')
-        print('特徵向量萃取...')
-        self.detector.set_feature_vector(url_feature, html_feature, ai_feature)
-        vector_feature = self.detector.get_feature_vector()
+        prob = self.detector.predict(url_feature, html_feature, ai_feature)
+        print(prob)
         return jsonify({
             'status':'success',
-            'message': vector_feature.tolist()
+            'message': prob[0]
         })
 
     def run(self, host='127.0.0.1', port=5000):

@@ -13,6 +13,7 @@ class PhishingDetectorModel:
     def predict(self, url_feature, html_feature, ai_feature):
         try:
             if not self.check_feature(url_feature, html_feature, ai_feature):
+                print('特徵欄位不一致')
                 return None
             self.set_feature_vector(url_feature, html_feature, ai_feature)
             prob = self.Meta_Model.predict_proba(self.feature_vector)[:, 1]
@@ -72,9 +73,7 @@ class PhishingDetectorModel:
         model.load_model(r"phishing-backend\\model\\ai_xgb_v1.json")
         return model
     def get_Meta_Model(self):
-        ##還沒寫好
-        pass
-        # return joblib.load(r"model\\meta_model_v1.pkl")
+        return joblib.load(r"phishing-backend\\model\\meta_model_logistic_v1.pkl")
     def get_feature_vector(self):
         return self.feature_vector
     def set_feature_vector(self, url_feature, html_feature, ai_feature):
