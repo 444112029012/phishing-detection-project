@@ -37,3 +37,10 @@
 # 當前成果
  * 前端 :<img width="437" height="425" alt="image" src="https://github.com/user-attachments/assets/1a4a41e1-58e7-49dd-bc92-b562e1ba3580" />
  * 後端:模型製作完畢
+
+# 實際使用方式
+ * 專案載入
+ * slm模型載入，並調整連接路徑
+ * 將「phishing-detector-extension」資料夾新增到CHROME擴充功能
+ * 本機安裝好需要的套件模組
+ * 啟動app.py檔(phishing-backend/app.py)
