@@ -36,20 +36,13 @@
 </head>
 
 <body>
-  <button id="getInfoButton">獲取網頁資訊</button>
-  <label for="urlDisplay">網頁 URL:</label>
-  <input type="text" id="urlDisplay" readonly placeholder="網頁 URL 將顯示於此...">
+  <h2>釣魚風險評估</h2>
 
-  <label for="textContent">網頁文本 (Text):</label>
-  <textarea id="textContent" readonly placeholder="網頁文本將顯示於此..."></textarea>
+  <button id="scanButton" style="width: 100%; padding: 10px; font-size: 16px;">
+    🛡️ 一鍵安全掃描
+  </button>
 
-  <label for="htmlContent">網頁 HTML:</label>
-  <textarea id="htmlContent" readonly placeholder="網頁 HTML 原始碼將顯示於此..."></textarea>
-
-  <button id="getPredict">取得預測結果</button>
-
-  <label for="result">預測結果:</label>
-  <textarea id="result" readonly placeholder="預測結果將顯示於此..."></textarea>
+  <div id="statusArea" style="margin-top: 15px; font-weight: bold; color: #333;"></div>
 
   <script src="popup.js"></script>
 </body>

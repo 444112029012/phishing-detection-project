@@ -122,6 +122,4 @@ class PhishingDetectorModel:
         ai_feature[bool_col] = ai_feature[bool_col].astype(int)
         ai_feature['impersonated_brand'] = [1 if k else 0 for k in ai_feature['impersonated_brand'].notnull()]
         print('AI特徵轉換完成')
-        return ai_feature
-        
-            
+        return ai_feature 

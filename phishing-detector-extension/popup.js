@@ -1,156 +1,132 @@
-// 監聽 "獲取網頁資訊" 按鈕的點擊事件
-document.getElementById('getInfoButton').addEventListener('click', () => {
-  const urlDisplay = document.getElementById('urlDisplay');
-  const textDisplay = document.getElementById('textContent');
-  const htmlDisplay = document.getElementById('htmlContent');
+// popup.js 完整程式碼
 
-  // 設定載入中的提示
-  urlDisplay.value = "載入中...";
-  textDisplay.value = "載入中...";
-  htmlDisplay.value = "載入中...";
+// 確保 HTML 完全載入後才執行綁定
+document.addEventListener('DOMContentLoaded', function () {
+  const scanButton = document.getElementById('scanButton');
+  const statusArea = document.getElementById('statusArea');
 
-  // 1. 查詢當前活動的、在目前視窗的分頁
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    // 檢查是否成功獲取到分頁
-    if (tabs.length === 0) {
-      urlDisplay.value = "錯誤：找不到活動分頁。";
-      textDisplay.value = "";
-      htmlDisplay.value = "";
-      return;
-    }
+  scanButton.addEventListener('click', async () => {
+    // ==========================================
+    // 1. 防呆鎖定：點擊瞬間反灰按鈕
+    // ==========================================
+    scanButton.disabled = true;
+    scanButton.innerText = "🔄 正在擷取網頁資訊...";
+    scanButton.style.cursor = "not-allowed";
+    statusArea.innerText = ""; // 清空之前的結果
+    statusArea.style.color = "#333";
 
-    const tab = tabs[0];
-    const tabId = tab.id;
+    try {
+      // ==========================================
+      // 2. 抓取當前分頁 URL
+      // ==========================================
+      let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-    // 2. [新任務] 獲取 URL - 這不需要注入腳本
-    // tab 物件本身就包含 URL
-    urlDisplay.value = tab.url;
-
-    // 3. [更新任務] 在該分頁上執行腳本以獲取文本和 HTML
-    chrome.scripting.executeScript(
-      {
-        target: { tabId: tabId }, // 指定要注入腳本的分頁 ID
-        func: getPageContent,      // 要在該分頁上執行的函數
-      },
-      (injectionResults) => {
-        // 這是 executeScript 的回呼函數
-
-        // 檢查執行過程中是否有錯誤
-        if (chrome.runtime.lastError) {
-          const errorMsg = `錯誤： ${chrome.runtime.lastError.message}`;
-          textDisplay.value = errorMsg;
-          htmlDisplay.value = errorMsg;
-          return;
-        }
-
-        // 檢查結果
-        if (injectionResults && injectionResults.length > 0 && injectionResults[0].result) {
-          const content = injectionResults[0].result;
-
-          // content 現在是一個物件 { text: "...", html: "..." }
-          textDisplay.value = content.text || "無法獲取文本。";
-          htmlDisplay.value = content.html || "無法獲取 HTML。";
-          const resultDisplay = document.getElementById('result');
-          fetch("http://127.0.0.1:5000/check", {
-            method: "POST", // 指定 HTTP 方法
-            headers: {
-              "Content-Type": "application/json" // 設定 MIME Type，告知伺服器 Body 的格式
-            },
-            // 將 JS Object 序列化為 JSON 字串
-            body: JSON.stringify({
-              url: tab.url,
-              text: content.text,
-              html: content.html
-            })
-          })
-            .then(response => {
-              if (!response.ok) throw new Error("網路請求失敗");
-              return response.json(); // 解析 Response Body 中的 JSON
-            })
-            .then(data => {
-              // 這裡的 data 已經是 Python 回傳的 JSON 物件
-              console.log("分析成功:", data.message);
-              document.getElementById('result').textContent = data.message;
-            })
-            .catch(error => {
-              console.error("Fetch Error:", error);
-            });
-
-        } else {
-          // 這種情況可能發生在無法注入腳本的頁面 (例如 Chrome 內部頁面)
-          const errorMsg = "無法在此頁面上執行腳本。";
-          textDisplay.value = errorMsg;
-          htmlDisplay.value = errorMsg;
-        }
-      }
-    );
-  });
-});
-
-// 綁定新的按鈕 ID
-document.getElementById('getPredict').addEventListener('click', () => {
-  const resultDisplay = document.getElementById('result');
-  resultDisplay.textContent = "資料擷取與模型分析中，請稍候...";
-
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (tabs.length === 0) return;
-    const tab = tabs[0];
-
-    // 執行腳本抓取網頁內容
-    chrome.scripting.executeScript(
-      {
+      // ==========================================
+      // 3. 注入腳本：抓取 HTML 結構與純文字
+      // ==========================================
+      let injectionResults = await chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        func: getPageContent, // 你原本寫好的那個抓取函式
-      },
-      (injectionResults) => {
-        if (chrome.runtime.lastError) {
-          resultDisplay.textContent = `錯誤：${chrome.runtime.lastError.message}`;
-          return;
+        func: () => {
+          // 這段程式碼會在使用者當前瀏覽的網頁中執行
+          return {
+            html: document.documentElement.outerHTML,
+            text: document.body.innerText
+          };
         }
+      });
 
-        if (injectionResults && injectionResults.length > 0 && injectionResults[0].result) {
-          const content = injectionResults[0].result;
+      const pageData = injectionResults[0].result;
 
-          // 將 URL、純文字、HTML 三大特徵發送給後端模型
-          fetch("http://127.0.0.1:5000/predict", {  // 🌟 這裡可以改成 /predict
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              url: tab.url,
-              text: content.text,
-              html: content.html
-            })
-          })
-            .then(response => {
-              if (!response.ok) throw new Error("伺服器無回應");
-              return response.json();
-            })
-            .then(data => {
-              // 顯示最終預測結果
-              resultDisplay.textContent = `預測結果：${data.message}`;
-            })
-            .catch(error => {
-              console.error("Fetch Error:", error);
-              resultDisplay.textContent = "無法連線到預測伺服器。";
-            });
+      // 更新狀態提示，讓使用者知道前端工作做完了
+      scanButton.innerText = "🧠 AI 模型分析中 (約需幾秒鐘)...";
+      statusArea.innerHTML = "✅ 網頁資訊獲取成功！<br>⏳ 正在等待後端伺服器運算...";
+
+      // ==========================================
+      // 4. 直接將資料打包發送給 Flask 後端
+      // ==========================================
+      const response = await fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: tab.url,
+          html: pageData.html,
+          text: pageData.text
+        })
+      });
+
+      // 檢查伺服器是否回傳錯誤 (例如 500)
+      if (!response.ok) {
+        throw new Error(`伺服器回應錯誤 (狀態碼: ${response.status})`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) {
+          break;
+        }
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n').filter(line => line.trim() !== '');
+        for (let line of lines) {
+          const data = JSON.parse(line);
+          if (data.status === 'progress') {
+            statusArea.innerHTML = `
+                            <div style="padding: 10px; background-color: #e3f2fd; border-radius: 5px; margin-top: 10px; border-left: 4px solid #2196f3;">
+                                <span style="color: #1565c0; font-weight: bold;">🔄 ${data.message}</span>
+                            </div>
+                        `;
+            await sleep(500);
+          }
+          else if (data.status === 'success') {
+            // 將後端回傳的結果印在畫面上 (這裡先保留你原本看特徵陣列的需求)
+            let probability = Number(data.message);
+            let displayPercentage = (probability * 100).toFixed(2);
+            let aiSummary = data.reasons || "系統未提供詳細分析理由。";
+
+            // 3. 根據機率決定 UI 的顏色與警告層級 (這招 UX 超加分！)
+            let boxColor = probability > 0.5 ? '#ffebee' : '#e8f5e9'; // 高風險用淺紅，低風險用淺綠
+            let borderColor = probability > 0.5 ? '#f44336' : '#4caf50'; // 邊框顏色 (紅/綠)
+            let titleText = probability > 0.5 ? '偵測到風險！' : '網站相對安全';
+            let titleColor = probability > 0.5 ? 'red' : 'green';
+
+            // 4. 畫出超專業的最終結果卡片
+            statusArea.innerHTML = `
+                <div style="padding: 12px; background-color: ${boxColor}; border-radius: 8px; margin-top: 15px; border-left: 5px solid ${borderColor}; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="color: ${titleColor}; font-size: 16px; font-weight: bold; margin-bottom: 5px;">
+                        ${titleText}
+                    </div>
+                    
+                    <div style="font-size: 15px; color: #333; font-weight: bold; margin-bottom: 10px;">
+                        釣魚風險指數: <span style="color: #d32f2f; font-size: 18px;">${displayPercentage}%</span>
+                    </div>
+                    
+                    <hr style="border: 0; border-top: 1px dashed #ccc; margin: 10px 0;">
+                    
+                    <div style="font-size: 13px; color: #444; line-height: 1.6; text-align: justify;">
+                        <span style="font-weight: bold; color: #1565c0;">AI評估：</span><br>
+                        ${aiSummary}
+                    </div>
+                </div>
+            `;
+          }
+          else if (data.status === 'error') {
+            statusArea.innerHTML = `<span style="color: red;">⚠️ 分析失敗：${data.message}</span>`;
+          }
         }
       }
-    );
+    } catch (error) {
+      // 捕捉任何網路斷線或擴充功能權限錯誤
+      console.error("發生錯誤:", error);
+      statusArea.innerHTML = `<span style="color: red;">❌ 發生錯誤：${error.message}</span>`;
+    } finally {
+      // ==========================================
+      // 6. 最終清理：解除鎖定，讓按鈕可以再次被點擊
+      // ==========================================
+      scanButton.disabled = false;
+      scanButton.innerText = "🛡️ 一鍵安全掃描";
+      scanButton.style.cursor = "pointer";
+    }
   });
 });
-
-/**
- * 這是在目標網頁上 *實際執行* 的函數。
- * 它會回傳一個包含文本和 HTML 的物件。
- */
-function getPageContent() {
-  const pageText = document.body ? document.body.innerText : "";
-
-  // document.documentElement.outerHTML 會獲取整個 <html> 標籤及其所有內容
-  const pageHtml = document.documentElement ? document.documentElement.outerHTML : "";
-
-  return {
-    text: pageText,
-    html: pageHtml
-  };
-}

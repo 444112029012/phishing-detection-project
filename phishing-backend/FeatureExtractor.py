@@ -75,6 +75,44 @@ class QwenLLM:
         print("⛔ 已達最大重試次數。")
         return f"Error: {ex}"
 
+    def getReason(self, reasons_list, probability):
+        prob_percent = round(probability * 100, 2)
+        reasons_text = "\n".join([f"- {r}" for r in reasons_list])
+        system_content = "你是一個冷酷的資安系統API，只負責輸出最終的報告文字。絕對禁止輸出任何思考過程、分析步驟、或『好的』、『首先』等對話用語。"
+        if prob_percent < 30:
+            tone_instruction = "該網站目前看來相對安全。請以安心、客觀的語氣解釋原因，告訴使用者可以放心瀏覽。"
+        elif prob_percent < 70:
+            tone_instruction = "該網站存在部分可疑特徵，屬於中等風險。請提醒使用者保持警覺，不要隨意輸入密碼。"
+        else:
+            tone_instruction = "該網站具有極高的釣魚風險！請以強烈警告的語氣，強烈建議使用者切勿輸入任何資料。"
+        prompt = f"""
+        請根據以下檢測數據，寫出約 100 字的繁體中文最終評估結論。
+
+        【檢測數據】
+        釣魚機率：{prob_percent}%
+        特徵分析：
+        {reasons_text}
+
+        【寫作指示】
+        1. {tone_instruction}
+        2. 直接給出結論，絕對不要包含「好的」、「首先」等對話用語。
+        """
+        try:
+            response = self.model.create_chat_completion(
+                messages=[
+                    {"role": "system", "content": system_content},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=500,
+                temperature=self.temperature,
+                )
+            raw_text = response["choices"][0]["message"]["content"]
+            cleaned_text = re.sub(r'<think>.*?</think>', '', raw_text, flags=re.DOTALL).strip()
+            return cleaned_text
+        except Exception as e:
+            print('理由生成錯誤')
+            return None
+
 class FeatureExtractor:
     def __init__(self):
         self.url_extractor = None
@@ -579,3 +617,84 @@ class FeatureExtractor:
         text_lower = text.lower()
         count = sum(kw in text_lower for kw in not_found_patterns)
         return count >= 2
+
+    def getReason(self, url_feature, html_feature, ai_feature, prob):
+        reasons_list = self.get_reason_list(url_feature, html_feature, ai_feature)
+        return self.llm.getReason(reasons_list, prob)
+
+    def get_reason_list(self, url_feature, html_feature, ai_feature):
+        reasons = []
+
+        # 確保資料存在，並轉為字典格式方便讀取 (假設傳入的是 Pandas DataFrame)
+        url_data = url_feature.iloc[0].to_dict() if url_feature is not None and not url_feature.empty else {}
+        html_data = html_feature.iloc[0].to_dict() if html_feature is not None and not html_feature.empty else {}
+        ai_data = ai_feature.iloc[0].to_dict() if ai_feature is not None and not ai_feature.empty else {}
+
+        # 檢查是否使用 IP 隱藏真實網域
+        if url_data.get('ip') == 1:
+            reasons.append("【網域異常】網址直接使用 IP 位址，這通常是為了規避網域審查的免洗惡意網站。")
+        
+        # 檢查 Punycode 同形異義字攻擊
+        if url_data.get('punycode') == 1:
+            reasons.append("【網域異常】網址使用了 Punycode (xn--) 編碼，企圖偽裝成正常字母以混淆視覺 (同形異義字攻擊)。")
+        
+        # 檢查 @ 符號混淆 (瀏覽器會忽略 @ 前面的字串)
+        if url_data.get('nb_at', 0) > 0:
+            reasons.append("【網域異常】網址包含 '@' 符號，駭客常利用此特性隱藏真實的連線目標。")
+            
+        # 檢查子網域氾濫
+        if url_data.get('nb_subdomains', 0) >= 3:
+            reasons.append("【網域混淆】網址包含異常數量的子網域，企圖構造出極長的網址來掩蓋真實主機名稱。")
+
+        # 檢查連字號氾濫或前後綴 (如 paypal-update.com)
+        if url_data.get('prefix_suffix') == 1 or url_data.get('nb_hyphens', 0) >= 2:
+            reasons.append("【網域混淆】網域包含可疑的連字號前後綴，企圖偽造官方品牌網域。")
+
+        # 檢查是否有自動跳轉
+        if html_data.get('has_js_redirect') == 1.0 or html_data.get('has_meta_refresh') == 1.0:
+            reasons.append("【結構異常】網頁原始碼藏有自動跳轉指令，企圖在您不注意時導向隱蔽的惡意終端頁面。")
+            
+        # 檢查超連結外部比例 (釣魚網站通常把連結指回真實官方網站以降低戒心)
+        if html_data.get('ratio_extHyperlinks', 0) > 0.6:
+            reasons.append("【結構異常】網頁內含有大量指向外部網域的超連結，缺乏正規網站應有的內部連結架構。")
+
+        # 檢查標題與網域一致性
+        if html_data.get('empty_title') == 1.0 or html_data.get('domain_in_title') == 0.0:
+            reasons.append("【身分不符】網頁標題空白或與所在網域名稱毫無關聯，缺乏品牌一致性。")
+            
+        # 檢查釣魚暗示詞
+        if html_data.get('phish_hints') == 1.0:
+            reasons.append("【高危險特徵】網頁原始碼中發現大量如 login、verify 等常見的釣魚誘餌關鍵字。")
+
+        # 檢查品牌偽冒
+        impersonated = ai_data.get('impersonated_brand', str)
+        if isinstance(impersonated, str) and impersonated.lower() not in ['none', 'null', '']:
+            reasons.append(f"【品牌冒用】AI 語意分析發現該網頁企圖偽裝成知名品牌【{impersonated}】。")
+
+        # 檢查威脅與急迫性
+        if ai_data.get('creates_urgency') == True or ai_data.get('uses_threats') == True:
+            reasons.append("【社交工程】內文使用「急迫性」或「威脅性」話術 (如帳號即將凍結)，企圖迫使您倉促行動。")
+
+        # 檢查敏感資訊索取
+        if ai_data.get('requests_sensitive_info') == True:
+            reasons.append("【高危險行為】系統偵測到網頁正試圖誘導您輸入密碼、信用卡號等機密資訊。")
+
+        # 檢查誘餌/不切實際的獎勵
+        if ai_data.get('offers_unrealistic_rewards') == True:
+            reasons.append("【社交工程】內容提供不切實際的獎勵或優惠，利用貪心心理進行誘騙。")
+            
+        # 檢查專業度與文法
+        if ai_data.get('has_spelling_grammar_errors') == True:
+            reasons.append("【專業度低】網頁內容存在明顯的拼寫或文法錯誤，這在嚴謹的官方網站中極少發生。")
+
+        # 檢查聯絡資訊缺失
+        if ai_data.get('has_physical_address') == False and ai_data.get('has_phone_number') == False:
+            reasons.append("【來源可疑】網站缺乏實體地址與聯絡電話等正規商業網站應具備的聯絡資訊。")
+
+        # ==========================================
+        # 總結收斂
+        # ==========================================
+        if len(reasons) == 0:
+            reasons.append("✅ 系統初步分析未發現明顯的釣魚網站特徵。")
+
+        return reasons
