@@ -29,7 +29,11 @@
   * 模型: XGBoost
   * 資料量: 32862
   * ROG AUC: 0.8921
-
+## META-MODEL
+  * 模型: Logistic
+  * 資料量: 32704
+  * ROG AUC: 0.9982
+  * Log Loss: 0.0128 
 
 # 其他注意事項
  * llama-cpp-python 套件安裝時容易出錯，可參考LLM環境部屬指南
