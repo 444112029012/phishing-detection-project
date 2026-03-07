@@ -16,5 +16,24 @@
  * 注意: 模型訓練時需要新增欄位「text_length」，記錄網頁文本長度，此欄位對於模型效果有顯著影響
 ## 資料集連結: https://drive.google.com/drive/folders/1jWLVY82goJM3t9FVoLrSrQUbv8p5UQy_?usp=sharing
 
+# 模型資訊
+## URL
+  * 模型: XGBoost
+  * 資料量: 147225
+  * ROG AUC: 0.9917
+## HTML
+  * 模型: MLP
+  * 資料量: 81632
+  * ROG AUC: 0.8453
+## AI
+  * 模型: XGBoost
+  * 資料量: 32862
+  * ROG AUC: 0.8921
+
+
 # 其他注意事項
  * llama-cpp-python 套件安裝時容易出錯，可參考LLM環境部屬指南
+
+# 當前成果
+ * 前端 :<img width="437" height="425" alt="image" src="https://github.com/user-attachments/assets/1a4a41e1-58e7-49dd-bc92-b562e1ba3580" />
+ * 後端:模型製作完畢
