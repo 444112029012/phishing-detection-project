@@ -107,7 +107,9 @@ class Dataset_Manager:
             df_process = self.df.copy()
             
             for index, row in df_process.iterrows():
-                if index < 72000:
+                if index < 81000:
+                    continue
+                elif index == 73889:
                     continue
                 print(f'正在處理第{index+1}/{len(df_process)}筆資料, url:{row["url"]}')
                 if row['ai_status'] == 'AI_SUCCESS' and pd.notna(row['creates_urgency']):
@@ -184,7 +186,7 @@ class QwenLLM:
         )
         self.system_prompt = self.system_prompt()
         self.max_retries = 1
-        self.max_tokens=2048
+        self.max_tokens=2500
         self.temperature=0.4
         self.response_format={"type": "json_object", "schema": PhishingSchema.model_json_schema()}
 
