@@ -8,7 +8,7 @@
 # 資料及資料蒐集概要
 <img width="1790" height="2511" alt="資料蒐集流程" src="https://github.com/user-attachments/assets/9e9ab228-c9a0-483c-a022-915483eb49cc" />
 註:爬蟲剛開始使用 request + selenium ，後改用 request + playwright
-<br>
+<hr>
 <i>更多圖表參考「圖」資料夾</i>
 
 # SLM
