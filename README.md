@@ -1,3 +1,14 @@
+# 模型架構概要
+ 採堆疊架構，三個維度特徵模型上堆疊最終輸出模型
+<img width="3084" height="978" alt="釣魚系統_模型架構" src="https://github.com/user-attachments/assets/d96019be-0af7-4dda-88ab-20b432ed1759" />
+
+# 系統資料流概要
+<img width="650" height="305" alt="image" src="https://github.com/user-attachments/assets/b27fbaa6-e50c-4b74-b47d-a80ba15adb2e" />
+
+# 資料及資料蒐集概要
+<img width="1790" height="2511" alt="資料蒐集流程" src="https://github.com/user-attachments/assets/9e9ab228-c9a0-483c-a022-915483eb49cc" />
+註:爬蟲剛開始使用 request + selenium ，後改用 request + playwright
+
 # SLM
 模型: Qwen3-8B-Q4_K_S <br>
 來源: https://huggingface.co/unsloth/Qwen3-8B-GGUF <br>
