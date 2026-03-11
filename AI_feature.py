@@ -107,7 +107,7 @@ class Dataset_Manager:
             df_process = self.df.copy()
             
             for index, row in df_process.iterrows():
-                if index < 81000:
+                if index < 85000:
                     continue
                 elif index == 73889:
                     continue
@@ -312,7 +312,8 @@ while True:
     try:
         main()
         print(f'等待20秒後重試')
-        time.sleep(20) 
+        time.sleep(20)
+        break
     except KeyboardInterrupt:
         break
     except Exception as e:
