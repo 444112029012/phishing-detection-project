@@ -5,7 +5,11 @@
 # 系統資料流概要
 <img width="650" height="305" alt="image" src="https://github.com/user-attachments/assets/b27fbaa6-e50c-4b74-b47d-a80ba15adb2e" />
 
-# 資料及資料蒐集概要
+# 系統類別概要
+<img width="747" height="984" alt="釣魚專題_類別圖" src="https://github.com/user-attachments/assets/f92dbc31-56aa-4e7c-b4df-35a2ff1b814d" />
+
+
+# 資料集資料蒐集概要
 <img width="1790" height="2511" alt="資料蒐集流程" src="https://github.com/user-attachments/assets/9e9ab228-c9a0-483c-a022-915483eb49cc" />
 註:爬蟲剛開始使用 request + selenium ，後改用 request + playwright
 <hr>
