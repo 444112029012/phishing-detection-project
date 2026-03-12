@@ -65,3 +65,6 @@
  * 將「phishing-detector-extension」資料夾新增到CHROME擴充功能
  * 本機安裝好需要的套件模組
  * 啟動app.py檔(phishing-backend/app.py)
+
+# 文件手冊:
+https://docs.google.com/document/d/12ymwbhiMN6RNxSNASU7RHOLjXNR3hopWngHtuOy1UoY/edit?usp=sharing
