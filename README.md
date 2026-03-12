@@ -66,5 +66,3 @@
  * 本機安裝好需要的套件模組
  * 啟動app.py檔(phishing-backend/app.py)
 
-# 文件手冊:
-https://docs.google.com/document/d/12ymwbhiMN6RNxSNASU7RHOLjXNR3hopWngHtuOy1UoY/edit?usp=sharing
