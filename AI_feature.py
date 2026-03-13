@@ -26,9 +26,9 @@ class PhishingSchema(BaseModel):
 
 class Dataset_Manager:
     def __init__(self):
-        self.source_path = r"D:\\畢業專題\\資料集\\搞AI欄位的\\phishing_dataset_expansion_forEmbeddingModule_Gemini_text.csv"
-        self.processed_path = r"D:\\畢業專題\\資料集\\搞AI欄位的\\Qwen3_8B_Q4_K_S\\phishing_dataset_expansion_forEmbeddingModule_Gemini_text_success.csv"
-        self.filename = 'phishing_dataset_expansion_forEmbeddingModule_Gemini_text_success.csv'
+        self.source_path = r"D:\\畢業專題\\資料集\\搞AI欄位的\\phishing_dataset_expansion_2_Gemini_text.csv"
+        self.processed_path = r"D:\\畢業專題\\資料集\\搞AI欄位的\\Qwen3_8B_Q4_K_S\\phishing_dataset_expansion_2_Gemini_text_success.csv"
+        self.filename = 'phishing_dataset_expansion_2_Gemini_text_success.csv'
         self.df = self.read_dataset()
         self.model = QwenLLM()
         self.col =['creates_urgency', 'uses_threats', 'requests_sensitive_info',
@@ -107,10 +107,10 @@ class Dataset_Manager:
             df_process = self.df.copy()
             
             for index, row in df_process.iterrows():
-                if index < 90000:
-                    continue
-                elif index == 73889:
-                    continue
+                # if index < 90000:
+                #     continue
+                # elif index == 73889:
+                #     continue
                 print(f'正在處理第{index+1}/{len(df_process)}筆資料, url:{row["url"]}')
                 if row['ai_status'] == 'AI_SUCCESS' and pd.notna(row['creates_urgency']):
                     print(f'已經處理過，跳過')
