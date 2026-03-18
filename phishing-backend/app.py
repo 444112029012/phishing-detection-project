@@ -45,13 +45,13 @@ class PhishingDetectorAPI:
                 yield json.dumps({'status': 'progress', 'message': '數據處理中...'}) + '\n'
                 self.ai_feature = self.detector.preprocess_ai(self.ai_feature)
                 self.html_feature = self.detector.preprocess_html(self.html_feature)
-                yield json.dumps({'status': 'progress', 'message': '數據處理完成...'}) + '\n'
+                yield json.dumps({'status': 'progress', 'message': '數據處理完成!'}) + '\n'
                 yield json.dumps({'status': 'progress', 'message': '進行最終分析...'}) + '\n'
                 prob = self.detector.predict(self.url_feature, self.html_feature, self.ai_feature)
                 print(prob)
                 reasons = self.extractor.getReason(self.url_feature, self.html_feature, self.ai_feature, prob[0])
                 print(f'reason:{reasons}')
-                yield json.dumps({'status': 'progress', 'message': '數據處理完成...'}) + '\n'
+                yield json.dumps({'status': 'progress', 'message': '最終分析完成!'}) + '\n'
                 final_result = {
                     "status": "success",
                     "message": prob[0],
