@@ -107,7 +107,7 @@ class Dataset_Manager:
             df_process = self.df.copy()
             
             for index, row in df_process.iterrows():
-                if index < 51000:
+                if index < 85000:
                     continue
                 elif index == 44346:
                     continue
