@@ -65,11 +65,12 @@ class PhishingDetectorModel:
         model.load_model(r"phishing-backend\\model\\optuna_xgb_url_final.json")
         return model
     def get_HTMLStructure_Feature_Model(self):
-        return load_model(r"phishing-backend\\model\\html_mlp_v1.keras")
-    def get_HTMLContent_Feature_Scaler(self):
         model = XGBClassifier()
         model.load_model(r"phishing-backend\\model\\optuna_xgb_html_final.json")
         return model
+    def get_HTMLContent_Feature_Scaler(self):
+        # 這裡要載入scaler，但因為模型不需要，所以先不實作
+        return None
     def get_HTMLContent_AI_Feature_Model(self):
         model = XGBClassifier()
         model.load_model(r"phishing-backend\\model\\optuna_xgb_ai_final.json")
