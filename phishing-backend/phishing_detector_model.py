@@ -6,7 +6,7 @@ class PhishingDetectorModel:
     def __init__(self):
         self.URL_Feature_Model = self.get_URL_Feature_Model()
         self.HTMLStructure_Feature_Model = self.get_HTMLStructure_Feature_Model()
-        self.HTMLContent_Feature_Scaler = self.get_HTMLContent_Feature_Scaler()
+        # self.HTMLContent_Feature_Scaler = self.get_HTMLContent_Feature_Scaler()
         self.HTMLContent_AI_Feature_Model = self.get_HTMLContent_AI_Feature_Model()
         self.Meta_Model = self.get_Meta_Model()
         self.feature_vector = None
@@ -62,18 +62,20 @@ class PhishingDetectorModel:
             return False
     def get_URL_Feature_Model(self):
         model = XGBClassifier()
-        model.load_model(r"phishing-backend\\model\\url_xgb_v1.json")
+        model.load_model(r"phishing-backend\\model\\optuna_xgb_url_final.json")
         return model
     def get_HTMLStructure_Feature_Model(self):
         return load_model(r"phishing-backend\\model\\html_mlp_v1.keras")
     def get_HTMLContent_Feature_Scaler(self):
-        return joblib.load(r"phishing-backend\\model\\html_scaler.pkl")
+        model = XGBClassifier()
+        model.load_model(r"phishing-backend\\model\\optuna_xgb_html_final.json")
+        return model
     def get_HTMLContent_AI_Feature_Model(self):
         model = XGBClassifier()
-        model.load_model(r"phishing-backend\\model\\ai_xgb_v1.json")
+        model.load_model(r"phishing-backend\\model\\optuna_xgb_ai_final.json")
         return model
     def get_Meta_Model(self):
-        return joblib.load(r"phishing-backend\\model\\meta_model_logistic_v1.pkl")
+        return joblib.load(r"phishing-backend\\model\\meta_logistic_final.pkl")
     def get_feature_vector(self):
         return self.feature_vector
     def set_feature_vector(self, url_feature, html_feature, ai_feature):
@@ -85,8 +87,8 @@ class PhishingDetectorModel:
             print(f'Error: {e}')
             raise Exception(f'Error: {e}')
     def preprocess_html(self, html_feature):
-        sca_col = ['links_in_tags', 'nb_hyperlinks']
-        html_feature[sca_col] = self.HTMLContent_Feature_Scaler.transform(html_feature[sca_col])
+        # sca_col = ['links_in_tags', 'nb_hyperlinks']
+        # html_feature[sca_col] = self.HTMLContent_Feature_Scaler.transform(html_feature[sca_col])
         if 'url' in html_feature.columns:
             html_feature.drop(['url'], axis=1, inplace=True)
         if 'feature_extracted' in html_feature.columns:
