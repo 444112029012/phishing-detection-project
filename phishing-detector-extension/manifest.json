@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "網頁資訊獲取器",
-  "version": "1.1",
-  "description": "獲取當前頁面的 URL、可見文本和 HTML 原始碼。",
+  "name": "ModaGuard",
+  "version": "3.0",
+  "description": "網頁風險評估工具",
   "permissions": [
     "activeTab",
     "scripting",
