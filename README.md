@@ -36,8 +36,11 @@
  * 用於元模型訓練: Dataset_Meta_Set
  * 注意: 模型訓練時需要新增欄位「text_length」，記錄網頁文本長度，此欄位對於模型效果有顯著影響
 ### 註: Dataset_Meta_Set拆出20%做為測試集(meta_test)
-## 資料集連結: https://drive.google.com/drive/folders/1jWLVY82goJM3t9FVoLrSrQUbv8p5UQy_?usp=sharing
 
+
+### 資料集連結: https://drive.google.com/drive/folders/1jWLVY82goJM3t9FVoLrSrQUbv8p5UQy_?usp=sharing
+
+<hr>
 # 模型資訊(使用meta_test測試)
 
 <img width="747" height="144" alt="螢幕擷取畫面 2026-04-21 160640" src="https://github.com/user-attachments/assets/408d80f6-e7d0-43ed-9b9c-a237e8e2afc5" />
@@ -57,4 +60,9 @@
  * 將「phishing-detector-extension」資料夾新增到CHROME擴充功能
  * 本機安裝好需要的套件模組
  * 啟動app.py檔(phishing-backend/app.py)
+<hr>
+
+### 文件連結
+https://docs.google.com/document/d/12ymwbhiMN6RNxSNASU7RHOLjXNR3hopWngHtuOy1UoY/edit?tab=t.0
+
 
