@@ -1,16 +1,20 @@
+# 專案名稱: ModaGuard
+<img width="200" height="auto" alt="icon" src="https://github.com/user-attachments/assets/6c5564f4-cb48-43a1-a0f1-8cd302a1da08" />
+
 # 模型架構概要
  採堆疊架構，三個維度特徵模型上堆疊最終輸出模型
-<img width="3084" height="978" alt="釣魚系統_模型架構" src="https://github.com/user-attachments/assets/d96019be-0af7-4dda-88ab-20b432ed1759" />
+<img width="7811" height="2452" alt="釣魚系統_模型架構" src="https://github.com/user-attachments/assets/921f2d28-4d75-481c-8223-a27ca5617ac2" />
+
 
 # 系統資料流概要
 <img width="650" height="305" alt="image" src="https://github.com/user-attachments/assets/b27fbaa6-e50c-4b74-b47d-a80ba15adb2e" />
 
 # 系統類別概要
-<img width="747" height="984" alt="釣魚專題_類別圖" src="https://github.com/user-attachments/assets/f92dbc31-56aa-4e7c-b4df-35a2ff1b814d" />
+<img width="650" height="auto" alt="釣魚專題_類別圖" src="https://github.com/user-attachments/assets/f92dbc31-56aa-4e7c-b4df-35a2ff1b814d" />
 
 
 # 資料集資料蒐集概要
-<img width="1790" height="2511" alt="資料蒐集流程" src="https://github.com/user-attachments/assets/9e9ab228-c9a0-483c-a022-915483eb49cc" />
+<img width="700" height="auto" alt="資料蒐集流程" src="https://github.com/user-attachments/assets/9e9ab228-c9a0-483c-a022-915483eb49cc" />
 註:爬蟲剛開始使用 request + selenium ，後改用 request + playwright
 <hr>
 <i>更多圖表參考「圖」資料夾</i>
@@ -22,35 +26,23 @@
 
 # 資料集資訊
 ## URL
- * 用於基模型訓練: phishing_dataset_combine2_url
- * 用於元模型訓練: phishing_dataset_expansion_forEmbeddingModule_url
+ * 用於基模型訓練: Train_Base_URL
+ * 用於元模型訓練: Dataset_Meta_Set
 ## HTML
- * 用於基模型訓練: phishing_dataset_html_combine2_html
- * 用於元模型訓練: phishing_dataset_expansion_forEmbeddingModule_html
+ * 用於基模型訓練: Train_Base_HTML
+ * 用於元模型訓練: Dataset_Meta_Set
 ## AI
- * 用於基模型訓練: phishing_dataset_Gemini_text_success + phishing_dataset_expansion_1_Gemini_text_success
- * 用於元模型訓練: phishing_dataset_expansion_forEmbeddingModule_Gemini_text_success
+ * 用於基模型訓練: Train_Base_AI
+ * 用於元模型訓練: Dataset_Meta_Set
  * 注意: 模型訓練時需要新增欄位「text_length」，記錄網頁文本長度，此欄位對於模型效果有顯著影響
+### 註: Dataset_Meta_Set拆出20%做為測試集(meta_test)
 ## 資料集連結: https://drive.google.com/drive/folders/1jWLVY82goJM3t9FVoLrSrQUbv8p5UQy_?usp=sharing
 
-# 模型資訊
-## URL
-  * 模型: XGBoost
-  * 資料量: 147225
-  * ROG AUC: 0.9917
-## HTML
-  * 模型: MLP
-  * 資料量: 81632
-  * ROG AUC: 0.8453
-## AI
-  * 模型: XGBoost
-  * 資料量: 32862
-  * ROG AUC: 0.8921
-## META-MODEL
-  * 模型: Logistic
-  * 資料量: 32704
-  * ROG AUC: 0.9982
-  * Log Loss: 0.0128 
+# 模型資訊(使用meta_test測試)
+
+<img width="747" height="144" alt="螢幕擷取畫面 2026-04-21 160640" src="https://github.com/user-attachments/assets/408d80f6-e7d0-43ed-9b9c-a237e8e2afc5" />
+<img width="454" height="145" alt="螢幕擷取畫面 2026-04-21 160627" src="https://github.com/user-attachments/assets/f2f58265-8da7-4f8e-beeb-c5f1afdede68" />
+
 
 # 其他注意事項
  * llama-cpp-python 套件安裝時容易出錯，可參考LLM環境部屬指南
