@@ -4,7 +4,7 @@
 # 模型架構概要
  採堆疊架構，三個維度特徵模型上堆疊最終輸出模型
 <img width="7811" height="2452" alt="釣魚系統_模型架構" src="https://github.com/user-attachments/assets/921f2d28-4d75-481c-8223-a27ca5617ac2" />
-
+#### 後改用SLM取代GEMINI API
 
 # 系統資料流概要
 <img width="650" height="305" alt="image" src="https://github.com/user-attachments/assets/b27fbaa6-e50c-4b74-b47d-a80ba15adb2e" />
