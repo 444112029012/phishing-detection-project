@@ -14,8 +14,8 @@
 
 
 # 資料集資料蒐集概要
-<img width="700" height="auto" alt="資料蒐集流程" src="https://github.com/user-attachments/assets/9e9ab228-c9a0-483c-a022-915483eb49cc" />
-註:爬蟲剛開始使用 request + selenium ，後改用 request + playwright
+<img width="650" height="auto" alt="資料蒐集流程" src="https://github.com/user-attachments/assets/11909ea5-4a49-41d0-9585-8b84b3707838" />
+
 <hr>
 <i>更多圖表參考「圖」資料夾</i>
 
